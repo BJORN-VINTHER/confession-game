@@ -5,13 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "pwa-node",
+            "type": "node",
             "request": "launch",
             "name": "Launch Program",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\index.js"
+            "program": "${workspaceFolder}\\src\\index.js",
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program In Browser",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\index.js",
+            "serverReadyAction":{
+                "action": "openExternally",
+                "uriFormat": "http://localhost:%s"
+            },
         }
-    ]
+    ],
 }

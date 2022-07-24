@@ -23,5 +23,3 @@ app.set('port', PORT);
 httpServer.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
 });
-
-console.log("just ran");
