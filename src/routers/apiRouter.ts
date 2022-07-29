@@ -3,17 +3,17 @@ import { Player } from '../data/models';
 import { createGame, joinGame } from '../gameManager';
 
 
-const router = Router();
+export const apiRouter = Router();
 
 // Host a new game
-router.post('/game', (req, res) => {
+apiRouter.post('/game', (req, res) => {
     let { ip } = req.body;
     const game = createGame(ip);
     res.status(200).send({ gameId: game.gameId});
 });
 
 // join a game
-router.get('/game/:gameId/join', (req, res) => {
+apiRouter.get('/game/:gameId/join', (req, res) => {
     try {
         const player:Player = req.body;
         joinGame(req.params.gameId, player);
@@ -24,8 +24,13 @@ router.get('/game/:gameId/join', (req, res) => {
 });
 
 // get game state
-router.get('/test', (req, res) => {
-    res.send('HTTP response with Hello!');
+apiRouter.get('/game/:gameId/state', (req, res) => {
+    const player:Player = req.body;
+    joinGame(req.params.gameId, player);
+    res.sendStatus(200);
 });
 
-module.exports = router;
+// get game state
+apiRouter.get('/test', (req, res) => {
+    res.send('HTTP response with Hello!');
+});

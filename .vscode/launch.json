@@ -11,7 +11,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\index.js",
+            
+            "program": "${workspaceFolder}\\build\\index.js",
         },
         {
             "type": "node",
@@ -20,7 +21,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\index.js",
+            "program": "${workspaceFolder}\\build\\index.js",
             "serverReadyAction":{
                 "action": "openExternally",
                 "uriFormat": "http://localhost:%s"

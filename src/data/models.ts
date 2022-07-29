@@ -1,3 +1,5 @@
+import { SocketConnection } from "../routers/socketConnection"
+
 export interface Game {
     gameId: string,
     hostIp: string,
@@ -23,7 +25,8 @@ export interface Player {
     ip: string,
     name: string,
     gifUrl: string,
-    score: number
+    score: number,
+    connection: SocketConnection
 }
 
 export interface Question {
