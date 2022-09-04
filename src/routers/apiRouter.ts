@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { Player } from '../data/models';
 import { createGame, joinGame } from '../gameManager';
-
+import bodyParser from "body-parser"
 
 export const apiRouter = Router();
+
 
 // Host a new game
 apiRouter.post('/game', (req, res) => {
@@ -30,7 +31,7 @@ apiRouter.get('/game/:gameId/state', (req, res) => {
     res.sendStatus(200);
 });
 
-// get game state
+// ztest
 apiRouter.get('/test', (req, res) => {
     res.send('HTTP response with Hello!');
 });
