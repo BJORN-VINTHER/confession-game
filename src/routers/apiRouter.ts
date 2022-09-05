@@ -8,9 +8,10 @@ export const apiRouter = Router();
 
 // Host a new game
 apiRouter.post('/game', (req, res) => {
-    let { ip } = req.body;
-    const game = createGame(ip);
-    res.status(200).send({ gameId: game.gameId});
+    const body = req.body;
+    // let { ip } = req.body;
+    // const game = createGame(ip);
+    // res.status(200).send({ gameId: game.gameId});
 });
 
 // join a game

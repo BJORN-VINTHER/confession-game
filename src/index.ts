@@ -11,13 +11,12 @@ import { addConnection } from "./gameManager";
 
 
 const app = express();
-app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cors());
 
 
 // setup default html page
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'static'));
 app.set('view engine', 'pug');
 app.use('/', viewRouter);
 

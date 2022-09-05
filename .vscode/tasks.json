@@ -1,0 +1,36 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "typescript build",
+            "presentation": {
+                "reveal": "silent",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "type": "typescript",
+            "tsconfig": "tsconfig.json",
+            "problemMatcher": ["$tsc"],
+            "group": "build",
+        },
+        {
+            "label": "copy .pug views",
+            "presentation": {
+                "reveal": "silent",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "type": "shell",
+            "command": "robocopy",
+            "args": ["./src/static", "./build/static", "/NJS", "/NJH"],
+            "group": "build"
+        },
+        {
+            "label": "prelaunch build",
+            "dependsOn": [
+                "copy .pug views",
+                "typescript build"
+            ]
+        }
+    ]
+}
