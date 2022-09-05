@@ -21,7 +21,6 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            // "preLaunchTask": "tsc: build",
             "preLaunchTask": "prelaunch build",
             "program": "${workspaceFolder}\\build\\index.js",
             "serverReadyAction":{

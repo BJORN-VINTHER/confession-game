@@ -8,10 +8,9 @@ export const apiRouter = Router();
 
 // Host a new game
 apiRouter.post('/game', (req, res) => {
-    const body = req.body;
-    // let { ip } = req.body;
-    // const game = createGame(ip);
-    // res.status(200).send({ gameId: game.gameId});
+    let { ip } = req.body;
+    const game = createGame(ip);
+    res.status(200).send({ gameId: game.gameId});
 });
 
 // join a game
@@ -32,7 +31,7 @@ apiRouter.get('/game/:gameId/state', (req, res) => {
     res.sendStatus(200);
 });
 
-// ztest
+// test
 apiRouter.get('/test', (req, res) => {
     res.send('HTTP response with Hello!');
 });
