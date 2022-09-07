@@ -14,7 +14,7 @@ apiRouter.post('/game', (req, res) => {
 });
 
 // join a game
-apiRouter.get('/game/:gameId/join', (req, res) => {
+apiRouter.post('/game/:gameId/join', (req, res) => {
     try {
         const player:Player = req.body;
         joinGame(req.params.gameId, player);
@@ -25,13 +25,8 @@ apiRouter.get('/game/:gameId/join', (req, res) => {
 });
 
 // get game state
-apiRouter.get('/game/:gameId/state', (req, res) => {
-    const player:Player = req.body;
-    joinGame(req.params.gameId, player);
-    res.sendStatus(200);
-});
-
-// test
-apiRouter.get('/test', (req, res) => {
-    res.send('HTTP response with Hello!');
-});
+// apiRouter.get('/game/:gameId/state', (req, res) => {
+//     const player:Player = req.body;
+//     joinGame(req.params.gameId, player);
+//     res.sendStatus(200);
+// });
