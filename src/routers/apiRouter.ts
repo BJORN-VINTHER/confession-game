@@ -30,3 +30,13 @@ apiRouter.post('/game/:gameId/join', (req, res) => {
 //     joinGame(req.params.gameId, player);
 //     res.sendStatus(200);
 // });
+
+apiRouter.post('/game/:gameId/join', (req, res) => {
+    try {
+        const player:Player = req.body;
+        joinGame(req.params.gameId, player);
+        res.sendStatus(200);
+    } catch(e) {
+        res.status(400).send("User has already joined the game");
+    }
+});

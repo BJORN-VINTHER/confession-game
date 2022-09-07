@@ -30,31 +30,44 @@ export function createGame(hostIp: string): Game {
     return game;
 }
 
-export function joinGame(gameId: string, player: Player): void {
+export function joinGame(gameId: string, newPlayer: Player): void {
     const game = activeGames[gameId];
-    const existingPlayer = game.players.find(x => x.ip === player.ip);
+    const existingPlayer = game.players.find(x => x.ip === newPlayer.ip);
     if (existingPlayer) {
-        throw Error("Player has already joined the game");
+        console.log("Player has already joined the game");
+        return;
+        // throw Error("Player has already joined the game");
     }
-    game.players.push(player);
-    console.log(`Player: ${player.ip} joined the game`);
+    game.players.push(newPlayer);
+    console.log(`Player: ${newPlayer.ip} joined the game`);
+
+    // notify player joined
+    for (const player of game.players) {
+        if (player !== newPlayer && player.connection) {
+            player.connection.notifyPlayerJoined(newPlayer);
+        }
+    }
 }
 
 export function addConnection(connection: SocketConnection) {
     const game = activeGames[connection.gameId];
     const player = game.players.find(x => x.ip === connection.ip);
     if (!player) {
-        throw Error("Player does not exist");
+        console.log("Player does not exist");
+        return;
+        // throw Error("Player does not exist");
     }
     player.connection = connection;
 }
 
 export function getGameState(gameId: string, player: Player): void {
-    const game = activeGames[gameId];
-    const existingPlayer = game.players.find(x => x.ip === player.ip);
-    if (existingPlayer) {
-        throw Error("Player has already joined the game");
-    }
-    game.players.push(player);
-    console.log(`Player: ${player.ip} joined the game`);
+    // const game = activeGames[gameId];
+    // const existingPlayer = game.players.find(x => x.ip === player.ip);
+    // if (existingPlayer) {
+    //     console.log("Player has already joined the game");
+    //     // throw Error("Player has already joined the game");
+    // } else {
+    //     game.players.push(player);
+    //     console.log(`Player: ${player.ip} joined the game`);
+    // }
 }
