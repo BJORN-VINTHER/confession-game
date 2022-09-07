@@ -5,16 +5,7 @@ import { SocketConnection } from "./routers/socketConnection";
 import { randomNumber } from "./utilities";
 
 
-const activeGames: { [key: string]: Game } = {
-    "1000": {
-        gameId: "1000",
-        currentRound: 0,
-        hostIp: "80.199.160.167",
-        players: [],
-        totalRounds: 10,
-        timePerRound: 5,
-    }
-};
+const activeGames: { [key: string]: Game } = {};
 
 export function createGame(hostIp: string): Game {
     const game: Game = {

@@ -26,7 +26,7 @@ export interface Player {
     name: string,
     gifUrl: string,
     score: number,
-    connection: SocketConnection
+    connection: SocketConnection | undefined
 }
 
 export interface Question {

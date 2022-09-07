@@ -2,15 +2,22 @@ import { Router } from 'express';
 import { Player } from '../data/models';
 import { createGame, joinGame } from '../gameManager';
 import bodyParser from "body-parser"
+import { simulateLobby } from '../utilities';
 
 export const apiRouter = Router();
 
 
 // Host a new game
 apiRouter.post('/game', (req, res) => {
-    let { ip } = req.body;
-    const game = createGame(ip);
-    res.status(200).send({ gameId: game.gameId});
+    try {
+        let { ip } = req.body;
+        const game = createGame(ip);
+        res.status(200).send({ gameId: game.gameId});
+    } catch(e) {
+        console.error(e, "Failed creating game");
+        res.status(500).send("Something failed");
+    }
+    
 });
 
 // join a game
@@ -20,7 +27,8 @@ apiRouter.post('/game/:gameId/join', (req, res) => {
         joinGame(req.params.gameId, player);
         res.sendStatus(200);
     } catch(e) {
-        res.status(400).send("User has already joined the game");
+        console.error(e, "Failed joining game");
+        res.status(500).send("Something failed");
     }
 });
 
@@ -31,12 +39,13 @@ apiRouter.post('/game/:gameId/join', (req, res) => {
 //     res.sendStatus(200);
 // });
 
-apiRouter.post('/game/:gameId/join', (req, res) => {
+// simulate a game
+apiRouter.post('/game/:gameId/simulate-lobby', async (req, res) => {
     try {
-        const player:Player = req.body;
-        joinGame(req.params.gameId, player);
+        await simulateLobby(req.params.gameId, req.query.startGame === "true");
         res.sendStatus(200);
-    } catch(e) {
-        res.status(400).send("User has already joined the game");
+    }  catch(e) {
+        console.error(e, "Failed simulating game");
+        res.status(500).send("Something failed");
     }
 });
