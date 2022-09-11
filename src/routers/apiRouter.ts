@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { Player } from '../data/models';
-import { createGame, joinGame } from '../gameManager';
+import { createGame, getGameState, joinGame } from '../gameManager';
 import bodyParser from "body-parser"
 import { simulateLobby } from '../utilities';
 
@@ -8,7 +8,7 @@ export const apiRouter = Router();
 
 
 // Host a new game
-apiRouter.post('/game', (req, res) => {
+apiRouter.post('/games', (req, res) => {
     try {
         let { ip } = req.body;
         const game = createGame(ip);
@@ -17,11 +17,10 @@ apiRouter.post('/game', (req, res) => {
         console.error(e, "Failed creating game");
         res.status(500).send("Something failed");
     }
-    
 });
 
 // join a game
-apiRouter.post('/game/:gameId/join', (req, res) => {
+apiRouter.post('/games/:gameId/join', (req, res) => {
     try {
         const player:Player = req.body;
         joinGame(req.params.gameId, player);
@@ -33,14 +32,18 @@ apiRouter.post('/game/:gameId/join', (req, res) => {
 });
 
 // get game state
-// apiRouter.get('/game/:gameId/state', (req, res) => {
-//     const player:Player = req.body;
-//     joinGame(req.params.gameId, player);
-//     res.sendStatus(200);
-// });
+apiRouter.get('/games/:gameId/state', (req, res) => {
+    try {
+        const gameState = getGameState(req.params.gameId);
+        res.status(200).send(gameState);
+    } catch(e) {
+        console.error(e, "Failed getting game state");
+        res.status(500).send("Something failed");
+    }
+});
 
 // simulate a game
-apiRouter.post('/game/:gameId/simulate-lobby', async (req, res) => {
+apiRouter.post('/games/:gameId/simulate-lobby', async (req, res) => {
     try {
         await simulateLobby(req.params.gameId, req.query.startGame === "true");
         res.sendStatus(200);

@@ -1,11 +1,20 @@
-import { PlayerDto } from "./data/dtos";
+import { GameStateDto, PlayerDto } from "./data/dtos";
 import { Game, Player } from "./data/models";
 import { questions } from "./data/questions";
 import { SocketConnection } from "./routers/socketConnection";
 import { randomNumber } from "./utilities";
 
 
-const activeGames: { [key: string]: Game } = {};
+const activeGames: { [key: string]: Game } = {
+    "1000": {
+        currentRound: 0,
+        gameId: "000",
+        hostIp: "123-456",
+        players: [],
+        timePerRound: 200,
+        totalRounds: 10
+    }
+};
 
 export function createGame(hostIp: string): Game {
     const game: Game = {
@@ -25,12 +34,12 @@ export function joinGame(gameId: string, newPlayer: Player): void {
     const game = activeGames[gameId];
     const existingPlayer = game.players.find(x => x.ip === newPlayer.ip);
     if (existingPlayer) {
-        console.log("Player has already joined the game");
+        console.log(`Player ${newPlayer.name} (${newPlayer.ip}) has already joined the game`);
         return;
         // throw Error("Player has already joined the game");
     }
     game.players.push(newPlayer);
-    console.log(`Player: ${newPlayer.ip} joined the game`);
+    console.log(`Player: ${newPlayer.name} (${newPlayer.ip}) joined the game`);
 
     // notify player joined
     for (const player of game.players) {
@@ -51,14 +60,20 @@ export function addConnection(connection: SocketConnection) {
     player.connection = connection;
 }
 
-export function getGameState(gameId: string, player: Player): void {
-    // const game = activeGames[gameId];
-    // const existingPlayer = game.players.find(x => x.ip === player.ip);
-    // if (existingPlayer) {
-    //     console.log("Player has already joined the game");
-    //     // throw Error("Player has already joined the game");
-    // } else {
-    //     game.players.push(player);
-    //     console.log(`Player: ${player.ip} joined the game`);
-    // }
+export function getGameState(gameId: string): GameStateDto {
+    const game = activeGames[gameId];
+    return {
+        hostIp: game.hostIp,
+        gameId: game.gameId,
+        completedRounds: game.currentRound,
+        totalRounds: game.totalRounds,
+        players: game.players.map(x => {
+            const dto: PlayerDto = {
+                ip: x.ip,
+                name: x.name,
+                gifUrl: x.gifUrl
+            };
+            return dto
+        })
+    };
 }
