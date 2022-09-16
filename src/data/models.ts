@@ -12,7 +12,11 @@ export interface Game {
 export interface GameRound {
     index: number,
     master: Player,
-    question: Question,
+    question: Question
+}
+
+export interface GameRoundResult {
+    round: GameRound,
     answers: Answer[],
 }
 

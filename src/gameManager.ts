@@ -1,5 +1,6 @@
+import { getgid } from "process";
 import { GameStateDto, PlayerDto } from "./data/dtos";
-import { Game, Player } from "./data/models";
+import { Game, GameRound, Player } from "./data/models";
 import { questions } from "./data/questions";
 import { SocketConnection } from "./routers/socketConnection";
 import { randomNumber } from "./utilities";
@@ -56,6 +57,19 @@ function getGame(gameId: string): Game {
         throw Error("Game not found");
     }
     return game;
+}
+
+export function getNextRound(gameId: string): GameRound {
+    const game = getGame(gameId);
+    const playerIndex = (game.currentRound + 1) % game.players.length;
+    const player = game.players[playerIndex];
+    const question = questions[game.currentRound];
+    game.currentRound++;
+    return {
+        index: game.currentRound,
+        master: player,
+        question: question,
+    };
 }
 
 export function getGameState(gameId: string): GameStateDto {

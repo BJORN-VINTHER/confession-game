@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { Player } from "../data/models";
+import { GameRound, GameRoundResult, Player } from "../data/models";
 
 export class SocketConnection {
     ip: string;
@@ -10,19 +10,33 @@ export class SocketConnection {
         this.ip = ip;
         this.socket = socket;
 
-        socket.on("test", x => this.test(x));
+        socket.on("test", x => this.onTest(x));
+        socket.on("nextRound", x => this.onTest(x));
     }
 
-    test(msg: string) {
+    onTest(msg: string) {
         console.log("recieved test: " + msg);
-        this.testResponse("Sample server response");
+        this.notifyTestResponse("Sample server response");
     }
 
-    testResponse(message: string) {
+    onNextRound(gameId: string) {
+        console.log("Started next round: " + gameId);
+        this.notifyTestResponse("Sample server response");
+    }
+
+    notifyTestResponse(message: string) {
         this.socket.emit("testResponse", message);
     }
 
     notifyPlayerJoined(player: Player) {
         this.socket.emit("playerJoined", player);
+    }
+
+    notifyRoundStarted(round: GameRound) {
+        this.socket.emit("roundStarted", round);
+    }
+
+    notifyRoundEnded(round: GameRoundResult) {
+        this.socket.emit("roundEnded", round);
     }
 }
