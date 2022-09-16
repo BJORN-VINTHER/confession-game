@@ -35,9 +35,11 @@ app.use(cors());
 // setup socket
 const io = new Server(httpServer, { cors: { origin: '*'} });
 io.on("connection", async (socket) => {
-    const { gameId, ip } = socket.handshake.query;
-    if (gameId && ip) {
-        const connection = new SocketConnection(socket, gameId.toString(), ip.toString());
+    const { ip } = socket.handshake.query;
+    if (ip) {
+        const connection = new SocketConnection(socket, ip.toString());
         addConnection(connection);
+    } else {
+        throw Error("Could not read ip")
     }
 });

@@ -4,21 +4,18 @@ import { questions } from "./data/questions";
 import { SocketConnection } from "./routers/socketConnection";
 import { randomNumber } from "./utilities";
 
+const connections: { [ip: string]: SocketConnection } = {};
 
-const activeGames: { [key: string]: Game } = {
-    "1000": {
-        currentRound: 0,
-        gameId: "000",
-        hostIp: "123-456",
-        players: [],
-        timePerRound: 200,
-        totalRounds: 10
-    }
-};
+const activeGames: { [key: string]: Game } = {};
+
+export function addConnection(connection: SocketConnection) {
+    connections[connection.ip] = connection;
+    console.log(`${connection.ip} connected`);
+}
 
 export function createGame(hostIp: string): Game {
     const game: Game = {
-        gameId: randomNumber(100, 1000).toString(),
+        gameId: "999", //randomNumber(100, 1000).toString(),
         hostIp: hostIp,
         players: [],
         timePerRound: 20,
@@ -31,33 +28,34 @@ export function createGame(hostIp: string): Game {
 }
 
 export function joinGame(gameId: string, newPlayer: Player): void {
-    const game = activeGames[gameId];
-    const existingPlayer = game.players.find(x => x.ip === newPlayer.ip);
-    if (existingPlayer) {
+    const game = getGame(gameId);
+
+    const playerExists = game.players.some(x => x.ip === newPlayer.ip);
+    if (playerExists) {
         console.log(`Player ${newPlayer.name} (${newPlayer.ip}) has already joined the game`);
         return;
-        // throw Error("Player has already joined the game");
     }
-    game.players.push(newPlayer);
-    console.log(`Player: ${newPlayer.name} (${newPlayer.ip}) joined the game`);
 
     // notify player joined
+    game.players.push(newPlayer);
+    console.log(`${newPlayer.name} (${newPlayer.ip}) joined the game`);
     for (const player of game.players) {
-        if (player !== newPlayer && player.connection) {
-            player.connection.notifyPlayerJoined(newPlayer);
+        if (player !== newPlayer) {
+            const io = connections[player.ip];
+            if (io) {
+                io.notifyPlayerJoined(newPlayer);
+            }
         }
     }
 }
 
-export function addConnection(connection: SocketConnection) {
-    const game = activeGames[connection.gameId];
-    const player = game.players.find(x => x.ip === connection.ip);
-    if (!player) {
-        console.log("Player does not exist");
-        return;
-        // throw Error("Player does not exist");
+function getGame(gameId: string): Game {
+    const game = activeGames[gameId];
+    if (!game) {
+        console.log(`Game id = ${gameId} does not exist`)
+        throw Error("Game not found");
     }
-    player.connection = connection;
+    return game;
 }
 
 export function getGameState(gameId: string): GameStateDto {

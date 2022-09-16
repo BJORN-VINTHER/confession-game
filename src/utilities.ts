@@ -13,7 +13,7 @@ export function sleep(ms: number) {
 
 export async function simulateLobby(gameId: string, startGame: boolean) {
     for (const player of testPlayers) {
-        await sleep(randomNumber(100, 500));
+        await sleep(randomNumber(500, 3000));
         joinGame(gameId, player);
     }
 

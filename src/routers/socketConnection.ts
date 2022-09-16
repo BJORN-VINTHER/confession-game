@@ -4,12 +4,10 @@ import { Player } from "../data/models";
 
 export class SocketConnection {
     ip: string;
-    gameId: string;
     private socket:Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
 
-    constructor(socket:Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, gameId: string, ip: string) {
+    constructor(socket:Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, ip: string) {
         this.ip = ip;
-        this.gameId = gameId;
         this.socket = socket;
 
         socket.on("test", x => this.test(x));
