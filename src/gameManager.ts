@@ -21,7 +21,7 @@ export function createGame(hostIp: string): Game {
         players: [],
         timePerRound: 20,
         totalRounds: questions.length - 1,
-        currentRound: -1
+        currentRound: 0
     };
     activeGames[game.gameId] = game;
     console.log(`Hosting game: ${game.gameId} with host: ${game.hostIp}`);
