@@ -45,7 +45,7 @@ apiRouter.get('/games/:gameId/state', (req, res) => {
 // simulate a game
 apiRouter.post('/games/:gameId/simulate-lobby', async (req, res) => {
     try {
-        await simulateLobby(req.params.gameId, req.query.startGame === "true");
+        await simulateLobby(req.params.gameId);
         res.sendStatus(200);
     }  catch(e) {
         console.error(e, "Failed simulating game");

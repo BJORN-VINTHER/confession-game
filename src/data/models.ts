@@ -6,17 +6,14 @@ export interface Game {
     players: Player[],
     totalRounds: number,
     timePerRound: number,
-    currentRound: number
+    currentRound: number,
+    rounds: GameRound[]
 }
 
 export interface GameRound {
     index: number,
     master: Player,
-    question: Question
-}
-
-export interface GameRoundResult {
-    round: GameRound,
+    question: Question,
     answers: Answer[],
 }
 

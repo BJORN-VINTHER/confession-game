@@ -1,6 +1,6 @@
 import { getgid } from "process";
 import { GameStateDto, PlayerDto } from "./data/dtos";
-import { Game, GameRound, Player } from "./data/models";
+import { Answer, Game, GameRound, Player } from "./data/models";
 import { questions } from "./data/questions";
 import { SocketConnection } from "./routers/socketConnection";
 import { randomNumber } from "./utilities";
@@ -21,7 +21,8 @@ export function createGame(hostIp: string): Game {
         players: [],
         timePerRound: 20,
         totalRounds: questions.length - 1,
-        currentRound: 0
+        currentRound: 0,
+        rounds: []
     };
     activeGames[game.gameId] = game;
     console.log(`Hosting game: ${game.gameId} with host: ${game.hostIp}`);
@@ -40,17 +41,10 @@ export function joinGame(gameId: string, newPlayer: Player): void {
     // notify player joined
     game.players.push(newPlayer);
     console.log(`${newPlayer.name} (${newPlayer.ip}) joined the game`);
-    for (const player of game.players) {
-        if (player !== newPlayer) {
-            const io = connections[player.ip];
-            if (io) {
-                io.notifyPlayerJoined(newPlayer);
-            }
-        }
-    }
+    notifyPlayersOfEvent(game, io => io.notifyPlayerJoined(newPlayer));
 }
 
-function getGame(gameId: string): Game {
+export function getGame(gameId: string): Game {
     const game = activeGames[gameId];
     if (!game) {
         console.log(`Game id = ${gameId} does not exist`)
@@ -59,17 +53,42 @@ function getGame(gameId: string): Game {
     return game;
 }
 
-export function getNextRound(gameId: string): GameRound {
+export function playerAnswered(gameId: string, playerIp: string, option: number) {
+    const game = getGame(gameId);
+    const player = game.players.find(x => x.ip === playerIp);
+    const round = getRound(gameId);
+    const hasAnswered = round.answers.some(x => x.player.ip === playerIp);
+    if (hasAnswered) {
+        console.log(`${player?.name} has already answered`);
+    } else {
+        console.log(`${player?.name} answered ${option}`);
+        const answer: Answer = {
+            player: player!,
+            option: option
+        };
+        round.answers.push(answer);
+        notifyPlayersOfEvent(game, io => io.notifyPlayerAnswered(answer));
+    }
+}
+
+export function nextRound(gameId: string): GameRound {
     const game = getGame(gameId);
     const playerIndex = (game.currentRound + 1) % game.players.length;
     const player = game.players[playerIndex];
     const question = questions[game.currentRound];
-    game.currentRound++;
-    return {
+    const newRound: GameRound = {
         index: game.currentRound,
         master: player,
         question: question,
-    };
+        answers: []
+    }
+    game.rounds.push(newRound);
+    return newRound;
+}
+
+export function getRound(gameId: string): GameRound {
+    const game = getGame(gameId);
+    return game.rounds[game.rounds.length - 1];
 }
 
 export function getGameState(gameId: string): GameStateDto {
@@ -88,4 +107,13 @@ export function getGameState(gameId: string): GameStateDto {
             return dto
         })
     };
+}
+
+function notifyPlayersOfEvent(game: Game, event: (io: SocketConnection) => void) {
+    for (const player of game.players) {
+        const io = connections[player.ip];
+        if (io) {
+            event(io);
+        }
+    }
 }
