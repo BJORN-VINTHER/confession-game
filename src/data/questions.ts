@@ -2,15 +2,6 @@ import { Question } from "./models";
 
 export const questions: Question[] = [
     {
-        text: "My goal of todays session is _",
-        options: [
-            "for us to learn something about each other and have a good time",
-            "To serve as a basis for your performance evaluation",
-            "for me to learn English",
-            "to make you help me debug my code"
-        ]
-    },
-    {
         text: "If I had to live in another country, I would move to _",
         options: [
             "Japan", 

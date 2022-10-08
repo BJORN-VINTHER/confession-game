@@ -70,6 +70,7 @@ export function playerAnswered(gameId: string, playerIp: string, option: number)
 
 export function nextRound(gameId: string): GameRound {
     const game = getGame(gameId);
+    game.currentRound++;
     const playerIndex = (game.currentRound + 1) % game.players.length;
     const player = game.players[playerIndex];
     const question = questions[game.currentRound];
