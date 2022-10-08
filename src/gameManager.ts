@@ -1,9 +1,6 @@
-import { getgid } from "process";
-import { GameStateDto, PlayerDto } from "./data/dtos";
-import { Answer, Game, GameRound, Player } from "./data/models";
+import { Answer, Game, GameRound, GameStateDto, Player, PlayerDto } from "./data/models";
 import { questions } from "./data/questions";
 import { SocketConnection } from "./routers/socketConnection";
-import { randomNumber } from "./utilities";
 
 const connections: { [ip: string]: SocketConnection } = {};
 
@@ -19,7 +16,7 @@ export function createGame(hostIp: string): Game {
         gameId: "999", //randomNumber(100, 1000).toString(),
         hostIp: hostIp,
         players: [],
-        timePerRound: 20,
+        timePerRound: 5,
         totalRounds: questions.length - 1,
         currentRound: 0,
         rounds: []
@@ -83,6 +80,13 @@ export function nextRound(gameId: string): GameRound {
         answers: []
     }
     game.rounds.push(newRound);
+    console.log("");
+    console.log(`--- Started round: ${newRound.index} ---`);
+    setTimeout(() => {
+        console.log(`--- Ended round: ${newRound.index} ---`);
+        notifyPlayersOfEvent(game, x => x.notifyRoundEnded(newRound))
+    }, 1000 * game.timePerRound);
+    notifyPlayersOfEvent(game, x => x.notifyRoundStarted(newRound))
     return newRound;
 }
 
@@ -98,6 +102,7 @@ export function getGameState(gameId: string): GameStateDto {
         gameId: game.gameId,
         completedRounds: game.currentRound,
         totalRounds: game.totalRounds,
+        timePerRound: game.timePerRound,
         players: game.players.map(x => {
             const dto: PlayerDto = {
                 ip: x.ip,

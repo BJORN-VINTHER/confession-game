@@ -1,5 +1,5 @@
 import { testPlayers } from "./data/testData";
-import { getGame, joinGame } from "./gameManager";
+import { getGame, joinGame, nextRound, playerAnswered } from "./gameManager";
 
 export function randomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min) ) + min;
@@ -20,9 +20,9 @@ export async function simulateLobby(gameId: string) {
 
 export async function simulateRound(gameId: string) {
   const game = getGame(gameId);
+  nextRound(game.gameId);
   for (const player of game.players) {
-      notifypl
-      await sleep(randomNumber(300, 1500));
-      joinGame(gameId, player);
+      const option = randomNumber(0, 4);
+      playerAnswered(game.gameId, player.ip, option);   
   }
 }

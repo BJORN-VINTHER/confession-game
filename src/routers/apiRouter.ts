@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { Player } from '../data/models';
 import { createGame, getGameState, joinGame } from '../gameManager';
 import bodyParser from "body-parser"
-import { simulateLobby } from '../utilities';
+import { simulateLobby, simulateRound } from '../utilities';
 
 export const apiRouter = Router();
 
@@ -42,13 +42,24 @@ apiRouter.get('/games/:gameId/state', (req, res) => {
     }
 });
 
-// simulate a game
+// simulate the lobby
 apiRouter.post('/games/:gameId/simulate-lobby', async (req, res) => {
     try {
         await simulateLobby(req.params.gameId);
         res.sendStatus(200);
     }  catch(e) {
         console.error(e, "Failed simulating game");
+        res.status(500).send("Something failed");
+    }
+});
+
+// simulate a round
+apiRouter.post('/games/:gameId/simulate-round', async (req, res) => {
+    try {
+        await simulateRound(req.params.gameId);
+        res.sendStatus(200);
+    }  catch(e) {
+        console.error(e, "Failed simulating round");
         res.status(500).send("Something failed");
     }
 });

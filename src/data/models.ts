@@ -10,6 +10,21 @@ export interface Game {
     rounds: GameRound[]
 }
 
+export interface PlayerDto {
+    ip: string,
+    name: string,
+    gifUrl: string
+}
+
+export interface GameStateDto {
+    gameId: string,
+    hostIp: string,
+    completedRounds: number,
+    totalRounds: number,
+    timePerRound: number,
+    players: PlayerDto[]
+}
+
 export interface GameRound {
     index: number,
     master: Player,
